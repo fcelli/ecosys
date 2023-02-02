@@ -4,7 +4,7 @@ import numpy
 class Entity:
     def __init__(self, pos:tuple, vel:float=0):
         # x, y cartesian coordinates
-        self._pos = numpy.array(pos, dtype=float)
+        self._pos = numpy.array(pos, dtype=numpy.uint8)
         # intensity of velocity vector
         self._vel = vel
         # diet (list of types)
@@ -14,7 +14,7 @@ class Entity:
         # energy
         self._energy = 1
         # size
-        self._size = 5
+        self._size = 1
         
     def distance(self, ent):
         '''
@@ -33,29 +33,13 @@ class Entity:
             raise TypeError
         return ent.pos - self.pos
     
-    def rel_pol_coord(self, ent):
-        '''
-        Polar coordinates of Entity ent with self as origin.
-        '''
-        if not isinstance(ent, Entity):
-            raise TypeError
-        x, y = self.rel_cart_coord(ent)
-        r = math.sqrt(x*x + y*y)
-        if r == 0:
-            return numpy.zeros(2, dtype=float)
-        theta = math.acos(x/r)
-        if y >= 0:
-            return numpy.array([r, theta])
-        else:
-            return numpy.array([r, 2*math.pi - abs(theta)])
-    
     def interact(self, ent):
         '''
         Returns True if the distance between self and ent is within the sum of their sizes.
         '''
         if not isinstance(ent, Entity):
             raise TypeError
-        return self.distance(ent) <= self.size + ent.size
+        return all(self.pos == ent.pos)
     
     def add_to_diet(self, obj_type):
         if not isinstance(obj_type, type(Entity)):
@@ -70,12 +54,16 @@ class Entity:
     def is_eaten_by(self, ent):
         return type(self) in ent.diet
     
-    def consume_energy(self):
-        self.energy -= 0.00003 * self.size**3 * self.vel**2
-    
-    def move(self, r, theta):
-        self.pos += numpy.array([r*math.cos(theta), r*math.sin(theta)], dtype=float)
-        self.consume_energy()
+    def move(self, action):
+        if action == 0: # up
+            self.pos[1] -= 1
+        if action == 1: # right
+            self.pos[0] += 1
+        if action == 2: # down
+            self.pos[1] += 1
+        if action == 3: # left
+            self.pos[0] -= 1
+        self.energy -= 0.1
     
     @property
     def pos(self):
