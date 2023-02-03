@@ -1,12 +1,13 @@
 import tensorflow as tf
 import keras
 
+
 class ActorCritic(tf.keras.Model):
     '''Combined actor-critic network.'''
     def __init__(
-        self,
-        num_actions: int,
-        num_hidden_units: int):
+            self,
+            num_actions: int,
+            num_hidden_units: int):
         '''Initialize model.'''
         super().__init__()
         
