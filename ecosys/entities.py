@@ -1,60 +1,50 @@
-import math
 import numpy
+from typing import TypeVar
+Entity = TypeVar("Entity", bound='Entity')
 
 class Entity:
-    def __init__(self, pos:tuple, vel:float=0):
+    def __init__(self, pos: tuple[int, int]):
         # x, y cartesian coordinates
         self._pos = numpy.array(pos, dtype=numpy.uint8)
-        # intensity of velocity vector
-        self._vel = vel
         # diet (list of types)
         self._diet = set()
         # color
-        self._color = None
+        self._color = (0, 0, 0)
         # energy
         self._energy = 1
-        # size
-        self._size = 1
         
-    def distance(self, ent):
+    def distance(self, ent: Entity) -> int:
         '''
         Returns the distance between two entities.
         '''
         if not isinstance(ent, Entity):
             raise TypeError
-        x, y = self.pos - ent.pos
-        return math.sqrt(x*x + y*y)
+        delta_x = max(self.pos[0], ent.pos[0]) - min(self.pos[0], ent.pos[0])
+        delta_y = max(self.pos[1], ent.pos[1]) - min(self.pos[1], ent.pos[1])
+        return delta_x + delta_y
     
-    def rel_cart_coord(self, ent):
+    def interact(self, ent: Entity) -> bool:
         '''
-        Cartesian coordinates of Entity ent with self as origin.
-        '''
-        if not isinstance(ent, Entity):
-            raise TypeError
-        return ent.pos - self.pos
-    
-    def interact(self, ent):
-        '''
-        Returns True if the distance between self and ent is within the sum of their sizes.
+        Returns True if self and ent occupy the same position.
         '''
         if not isinstance(ent, Entity):
             raise TypeError
         return all(self.pos == ent.pos)
     
-    def add_to_diet(self, obj_type):
+    def add_to_diet(self, obj_type: Entity) -> None:
         if not isinstance(obj_type, type(Entity)):
             raise TypeError
         self._diet.add(obj_type)
                 
-    def remove_from_diet(self, obj_type):
+    def remove_from_diet(self, obj_type: Entity) -> None:
         if not isinstance(obj_type, type(Entity)):
             raise TypeError
         self._diet.discard(obj_type)
         
-    def is_eaten_by(self, ent):
+    def is_eaten_by(self, ent: Entity) -> bool:
         return type(self) in ent.diet
     
-    def move(self, action):
+    def move(self, action: int) -> None:
         if action == 0: # up
             self.pos[1] -= 1
         if action == 1: # right
@@ -63,65 +53,46 @@ class Entity:
             self.pos[1] += 1
         if action == 3: # left
             self.pos[0] -= 1
-        self.energy -= 0.1
+        self.energy -= 0.05
     
     @property
-    def pos(self):
+    def pos(self) -> tuple[int, int]:
         return self._pos
     
     @pos.setter
-    def pos(self, value):
+    def pos(self, value: tuple[int, int]) -> None:
         self._pos = value
     
     @property
-    def vel(self):
-        return self._vel
-    
-    @vel.setter
-    def vel(self, value):
-        self._vel = value
-    
-    @property
-    def diet(self):
+    def diet(self) -> set:
         return self._diet
     
     @property
-    def color(self):
+    def color(self) -> tuple[int, int, int]:
         return self._color
     
     @color.setter
-    def color(self, value):
+    def color(self, value: tuple[int, int, int]) -> None:
         self._color = value
         
     @property
-    def energy(self):
+    def energy(self) -> float:
         return self._energy
     
     @energy.setter
-    def energy(self, value):
+    def energy(self, value: float) -> None:
         self._energy = value
-        
-    @property
-    def size(self):
-        return self._size
-    
-    @size.setter
-    def size(self, value):
-        self._size = value
     
 class Resource(Entity):
-    def __init__(self, pos):
-        super().__init__(pos, vel=0)
-        
+    def __init__(self, pos: tuple[int, int]):
+        super().__init__(pos)
         # color
         self.color = (255, 255, 255)
         
 class Herbivor(Entity):
-    def __init__(self, pos):
-        super().__init__(pos, vel=1)
-        
+    def __init__(self, pos: tuple[int, int]):
+        super().__init__(pos)
         # resources are eaten by Herbivors
         self.add_to_diet(Resource)
-        
         # color
         self.color = (0, 255, 0)
