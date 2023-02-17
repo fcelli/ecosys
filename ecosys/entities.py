@@ -58,19 +58,19 @@ class Entity:
     @pos.setter
     def pos(self, value: tuple[int, int]) -> None:
         self._pos = value
-        
+
     @property
     def x(self) -> int:
         return self._pos[0]
-    
+
     @x.setter
     def x(self, value: int) -> None:
         self._pos[0] = value
-    
+
     @property
     def y(self) -> int:
         return self._pos[1]
-    
+
     @y.setter
     def y(self, value: int) -> None:
         self._pos[1] = value
