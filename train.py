@@ -21,6 +21,7 @@ MAX_STEPS = 500
 GAMMA = 0.99
 REWARD_THRESHOLD = 270
 
+
 def main():
     # Create environment
     env = Ecosystem(grid_dim=GRID_DIM, n_resources=N_RESOURCES)
@@ -45,12 +46,13 @@ def main():
         running_rewards.append(running_reward)
         t.set_postfix(
             episode_reward=episode_reward, running_reward=running_reward)
-        if running_reward > REWARD_THRESHOLD and i >= MIN_EPISODES:  
+        if running_reward > REWARD_THRESHOLD and i >= MIN_EPISODES:
             break
     print(f'\nSolved at episode {i}: average reward: {running_reward:.2f}!')
     # Compile and save model
     model.compile()
-    model.save(f'./data/ActorCritic.model')
+    model.save('./data/models/ActorCritic.model')
+
 
 if __name__ == '__main__':
     main()
