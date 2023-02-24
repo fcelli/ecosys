@@ -23,4 +23,4 @@ make train
 make run
 ```
 
-![](https://github.com/fcelli/ecosys/tree/main/docs/example.gif)
+![](https://github.com/fcelli/ecosys/blob/main/docs/example.gif)
