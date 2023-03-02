@@ -1,4 +1,4 @@
-from ecosys.env.entities import Entity
+from ecosys.environment.entities import Entity
 
 
 def test_distance():

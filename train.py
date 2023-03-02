@@ -21,7 +21,7 @@ REWARD_THRESHOLD = 270
 
 def main():
     # Create environment
-    env = gym.make('ecosys.env:Ecosys-v0')
+    env = gym.make('ecosys.environment:Ecosys-v0')
     # Initialize ML model
     model = ActorCritic(
         num_actions=env.action_space.n,

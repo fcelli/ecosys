@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from ecosys.env import EcosysEnv
+from ecosys.environment import EcosysEnv
 
 
 class ActorCriticTrainer:
