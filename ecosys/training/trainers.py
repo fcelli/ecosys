@@ -1,14 +1,15 @@
 import numpy as np
 import tensorflow as tf
-from ecosys.environment import Ecosystem
+from ecosys.env import EcosysEnv
 
 
-class Trainer:
+class ActorCriticTrainer:
     def __init__(
-            self,
-            env: Ecosystem,
-            model: tf.keras.Model,
-            optimizer: tf.keras.optimizers.Optimizer):
+        self,
+        env: EcosysEnv,
+        model: tf.keras.Model,
+        optimizer: tf.keras.optimizers.Optimizer
+    ):
         '''Initialize Trainer.'''
         # Environment
         self.env = env
@@ -18,9 +19,10 @@ class Trainer:
         self.optimizer = optimizer
 
     def run_episode(
-            self,
-            initial_state: tf.Tensor,
-            max_steps: int) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
+        self,
+        initial_state: tf.Tensor,
+        max_steps: int
+    ) -> tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         '''Run a single episode to collect training data'''
         # Initialize tensors containing the action probabilities, the critic values and the rewards
         action_probs = tf.TensorArray(dtype=tf.float32, size=0, dynamic_size=True)
@@ -58,10 +60,11 @@ class Trainer:
         return action_probs, values, rewards
 
     def get_expected_return(
-            self,
-            rewards: tf.Tensor,
-            gamma: float,
-            standardize: bool = True) -> tf.Tensor:
+        self,
+        rewards: tf.Tensor,
+        gamma: float,
+        standardize: bool = True
+    ) -> tf.Tensor:
         '''Compute expected returns per timestep.'''
         n = tf.shape(rewards)[0]
         returns = tf.TensorArray(dtype=tf.float32, size=n)
@@ -82,10 +85,11 @@ class Trainer:
         return returns
 
     def compute_loss(
-            self,
-            action_probs: tf.Tensor,
-            values: tf.Tensor,
-            returns: tf.Tensor) -> tf.Tensor:
+        self,
+        action_probs: tf.Tensor,
+        values: tf.Tensor,
+        returns: tf.Tensor
+    ) -> tf.Tensor:
         '''Computes the combined Actor-Critic loss.'''
         huber_loss = tf.keras.losses.Huber(reduction=tf.keras.losses.Reduction.SUM)
         advantage = returns - values
@@ -96,10 +100,11 @@ class Trainer:
 
     @tf.function
     def train_step(
-            self,
-            initial_state: tf.Tensor,
-            gamma: float,
-            max_steps_per_episode: int) -> tf.Tensor:
+        self,
+        initial_state: tf.Tensor,
+        gamma: float,
+        max_steps_per_episode: int
+    ) -> tf.Tensor:
         '''Runs a model training step.'''
         with tf.GradientTape() as tape:
             # Run the model for one episode to collect training data
@@ -110,8 +115,8 @@ class Trainer:
             action_probs, values, returns = [tf.expand_dims(x, 1) for x in [action_probs, values, returns]]
             # Calculate the loss values to update our network
             loss = self.compute_loss(action_probs, values, returns)
-        # Compute the gradients from the loss
-        grads = tape.gradient(loss, self.model.trainable_variables)
+            # Compute the gradients from the loss
+            grads = tape.gradient(loss, self.model.trainable_variables)
         # Apply the gradients to the model's parameters
         self.optimizer.apply_gradients(zip(grads, self.model.trainable_variables))
         episode_reward = tf.math.reduce_sum(rewards)
@@ -119,10 +124,16 @@ class Trainer:
 
     # Wrap Gym's `env.step` call as an operation in a TensorFlow function.
     # This allows it to be included in a callable TensorFlow graph.
-    def env_step(self, action: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-        '''Returns state, reward and done flag given an action.'''
-        state, reward, done = self.env.step(action)
-        return (state.astype(np.int8), np.array(reward, np.float32), np.array(done, np.int8))
+    def env_step(
+        self,
+        action: np.ndarray
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        '''Returns state, reward and terminated flag given an action.'''
+        state, reward, terminated, _, _ = self.env.step(action)
+        return (state.astype(np.int8), np.array(reward, np.float32), np.array(terminated, np.int8))
 
-    def tf_env_step(self, action: tf.Tensor) -> list[tf.Tensor]:
+    def tf_env_step(
+        self,
+        action: tf.Tensor
+    ) -> list[tf.Tensor]:
         return tf.numpy_function(self.env_step, [action], [tf.int8, tf.float32, tf.int8])

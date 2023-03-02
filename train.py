@@ -3,14 +3,11 @@ import keras
 import collections
 import statistics
 import tqdm
-from ecosys.environment import Ecosystem
+import gym
 from ecosys.models import ActorCritic
-from ecosys.training import Trainer
+from ecosys.training import ActorCriticTrainer
 
 
-# Environment
-GRID_DIM = 10
-N_RESOURCES = 20
 # Model
 N_HIDDEN = 64
 LEARNING_RATE = 0.01
@@ -24,7 +21,7 @@ REWARD_THRESHOLD = 270
 
 def main():
     # Create environment
-    env = Ecosystem(grid_dim=GRID_DIM, n_resources=N_RESOURCES)
+    env = gym.make('ecosys.env:Ecosys-v0')
     # Initialize ML model
     model = ActorCritic(
         num_actions=env.action_space.n,
@@ -32,13 +29,13 @@ def main():
     )
     # Initialize the Trainer
     optimizer = keras.optimizers.Adam(learning_rate=LEARNING_RATE)
-    trainer = Trainer(env, model, optimizer)
+    trainer = ActorCriticTrainer(env, model, optimizer)
     # Episode loop
     episodes_reward: collections.deque = collections.deque(maxlen=MAX_EPISODES)
     running_rewards: collections.deque = collections.deque(maxlen=MAX_EPISODES)
     t = tqdm.trange(MAX_EPISODES)
     for i in t:
-        initial_state = env.reset()
+        initial_state, _ = env.reset()
         initial_state = tf.constant(initial_state, dtype=tf.int8)
         episode_reward = float(trainer.train_step(initial_state, GAMMA, MAX_STEPS))
         episodes_reward.append(episode_reward)

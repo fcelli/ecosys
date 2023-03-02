@@ -23,4 +23,4 @@ make train
 make run
 ```
 
-![](https://github.com/fcelli/ecosys/blob/main/docs/example.gif)
+<img src="https://github.com/fcelli/ecosys/blob/main/docs/example.gif" width="40%" height="40%"/>

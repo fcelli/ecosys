@@ -10,4 +10,4 @@ train:
 run:
 	python run.py
 
-.PHONY: init test train play
+.PHONY: init test train run
