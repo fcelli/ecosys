@@ -47,7 +47,7 @@ class EcosysEnv(gym.Env):
         self,
         action: int
     ) -> tuple[numpy.ndarray, float, bool]:
-        '''Execute one time step within the environment'''
+        '''Execute one time step within the environment.'''
         # Error handling
         err_msg = f'{action!r} ({type(action)}) invalid'
         assert self.action_space.contains(action), err_msg
@@ -81,7 +81,7 @@ class EcosysEnv(gym.Env):
         seed: Optional[int] = None,
         options: Optional[dict] = None
     ) -> numpy.ndarray:
-        '''Reset the environment state'''
+        '''Reset the environment state.'''
         super().reset(seed=seed)
         # Parse options
         if options is not None:
@@ -160,15 +160,15 @@ class EcosysEnv(gym.Env):
             self.isopen = False
 
     def _gen_ent(self) -> tuple[Herbivore, list[Resource]]:
-        '''Randomly generate the herbivor and resources on the grid'''
-        prod = itertools.product(range(self.grid_dim), range(self.grid_dim))
-        coords = random.sample(list(prod), self.n_resources+1)
+        '''Randomly generate the herbivore and resources on the grid.'''
+        random_nums = random.sample(range(self.grid_dim*self.grid_dim), self.n_resources+1)
+        coords = [[num//self.grid_dim, num%self.grid_dim] for num in random_nums]
         herb = Herbivore(coords[0])
         res = [Resource(pos) for pos in coords[1:]]
         return herb, res
 
     def _get_obs(self) -> numpy.ndarray:
-        '''Return the current state of the environment'''
+        '''Return the current state of the environment.'''
         state = numpy.zeros((2, 4))
         # Compute the food array
         food = numpy.zeros((4,), dtype=float)
@@ -201,7 +201,7 @@ class EcosysEnv(gym.Env):
 
     def _get_info(self) -> dict:
         return {
-            'herbivor_pos': self._herb.pos,
+            'herbivore_pos': self._herb.pos,
             'resources_remaining': len(self._res)
         }
 
