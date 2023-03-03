@@ -17,27 +17,27 @@ class EcosysEnv(gym.Env):
 
     The action is a `ndarray` with shape `(1,)` which can take values `{0, 1, 2, 3}` indicating the movement of the herbivore on the grid.
 
-    | Num | Action               |
-    |-----|----------------------|
-    | 0   | Move herbivore up    |
-    | 1   | Move herbivore right |
-    | 2   | Move herbivore down  |
-    | 3   | Move herbivore left  |
+    | Num   | Action               |
+    |-------|----------------------|
+    | `0`   | Move herbivore up    |
+    | `1`   | Move herbivore right |
+    | `2`   | Move herbivore down  |
+    | `3`   | Move herbivore left  |
 
     ### Observation Space
 
     The observation is a `ndarray` with shape `(2, 4)` with multibinary values `{0, 1}`. The first array describes the position of resources (food) with respect to the herbivore (importance of food scales with 1/distance^2). The second array describes the position of the herbivore with respect to the grid boundary (wall).
 
-    | Idx  | Observation | Values |
-    |------|-------------|--------|
-    | 0, 0 | Food Up     | {0, 1} |
-    | 0, 1 | Food Right  | {0, 1} |
-    | 0, 2 | Food Down   | {0, 1} |
-    | 0, 3 | Food Left   | {0, 1} |
-    | 1, 0 | Wall Up     | {0, 1} |
-    | 1, 1 | Wall Right  | {0, 1} |
-    | 1, 2 | Wall Down   | {0, 1} |
-    | 1, 3 | Wall Left   | {0, 1} |
+    | Idx    | Observation | Values   |
+    |--------|-------------|----------|
+    | `0, 0` | Food Up     | `{0, 1}` |
+    | `0, 1` | Food Right  | `{0, 1}` |
+    | `0, 2` | Food Down   | `{0, 1}` |
+    | `0, 3` | Food Left   | `{0, 1}` |
+    | `1, 0` | Wall Up     | `{0, 1}` |
+    | `1, 1` | Wall Right  | `{0, 1}` |
+    | `1, 2` | Wall Down   | `{0, 1}` |
+    | `1, 3` | Wall Left   | `{0, 1}` |
 
     ### Rewards
 
@@ -62,7 +62,7 @@ class EcosysEnv(gym.Env):
     ### Arguments
 
     ```
-    gym.make('ecosys.environment:Ecosys-v0')
+    gym.make('Ecosys-v0')
     ```
     '''
 
