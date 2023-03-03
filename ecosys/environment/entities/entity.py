@@ -86,19 +86,3 @@ class Entity:
     @color.setter
     def color(self, value: tuple[int, int, int]) -> None:
         self._color = value
-
-
-class Resource(Entity):
-    def __init__(self, pos: tuple[int, int]):
-        super().__init__(pos)
-        # color
-        self.color = (255, 255, 255)
-
-
-class Herbivore(Entity):
-    def __init__(self, pos: tuple[int, int]):
-        super().__init__(pos)
-        # resources are eaten by Herbivors
-        self.add_to_diet(Resource)
-        # color
-        self.color = (0, 255, 0)
