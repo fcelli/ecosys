@@ -1,7 +1,6 @@
 import sys
 import numpy
 import random
-import itertools
 from typing import Optional
 import gym
 from gym.error import DependencyNotInstalled
@@ -11,7 +10,61 @@ from ecosys.environment.entities import Resource, Herbivore
 class EcosysEnv(gym.Env):
     '''
     ### Description
-    This environment describes describes the movement of a herbivore scavenging for resources on a square grid world.
+    
+    This environment describes the movement of a herbivore scavenging for resources on a square grid world.
+    
+    ### Action Space
+    
+    The action is a `ndarray` with shape `(1,)` which can take values `{0, 1, 2, 3}` indicating the movement of the herbivore on the grid.
+    
+    | Num | Action               |
+    |-----|----------------------|
+    | 0   | Move herbivore up    |
+    | 1   | Move herbivore right |
+    | 2   | Move herbivore down  |
+    | 3   | Move herbivore left  |
+    
+    ### Observation Space
+    
+    The observation is a `ndarray` with shape `(2, 4)` with multibinary values. The first array describes the position of resources (food) with respect to the herbivore (importance of food scales with 1/distance^2). The second array describes the position of the herbivore with respect to the grid boundary (wall).
+    
+    | Idx  | Observation | Values |
+    |------|-------------|--------|
+    | 0, 0 | Food Up     | {0, 1} |
+    | 0, 1 | Food Right  | {0, 1} |
+    | 0, 2 | Food Down   | {0, 1} |
+    | 0, 3 | Food Left   | {0, 1} |
+    |------|-------------|--------|
+    | 1, 0 | Wall Up     | {0, 1} |
+    | 1, 1 | Wall Right  | {0, 1} |
+    | 1, 2 | Wall Down   | {0, 1} |
+    | 1, 3 | Wall Left   | {0, 1} |
+    
+    ### Rewards
+    
+    | Reward                 | Description                             |
+    |------------------------|-----------------------------------------|
+    | +100                   | The herbivore eats all resources        |
+    | +10                    | The herbivore eats one resource         |
+    | -100                   | The herbivore crosses the grid boundary |
+    | -1./(2*(grid_dim - 1)) | Otherwise                               |
+    
+    ### Starting State
+    
+    The herbivore and all resources are randomly scattered on the grid.
+    
+    ### Episode End
+    
+    The episode ends if any one of the following occurs:
+    1. Termination: The herbivore crosses the grid boundary
+    2. Termination: The herbivore eats all resources on the grid
+    3. Truncation: Episode length is greater than 500
+    
+    ### Arguments
+    
+    ```
+    gym.make('ecosys.environment:Ecosys-v0')
+    ```
     '''
 
     metadata = {
@@ -97,7 +150,7 @@ class EcosysEnv(gym.Env):
         return self.state, self.info
 
     def render(self) -> None:
-        '''Render the environment to screen'''
+        '''Render the environment to screen.'''
         # Check render mode has been set
         if self.render_mode is None:
             gym.logger.warn(
