@@ -4,6 +4,7 @@ import collections
 import statistics
 import tqdm
 import gym
+from ecosys.environment import EcosysEnv
 from ecosys.models import ActorCritic
 from ecosys.training import ActorCriticTrainer
 
@@ -21,7 +22,7 @@ REWARD_THRESHOLD = 270
 
 def main():
     # Create environment
-    env = gym.make('ecosys.environment:Ecosys-v0')
+    env = gym.make('Ecosys-v0')
     # Initialize ML model
     model = ActorCritic(
         num_actions=env.action_space.n,

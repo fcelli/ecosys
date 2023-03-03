@@ -34,7 +34,6 @@ class EcosysEnv(gym.Env):
     | 0, 1 | Food Right  | {0, 1} |
     | 0, 2 | Food Down   | {0, 1} |
     | 0, 3 | Food Left   | {0, 1} |
-    |------|-------------|--------|
     | 1, 0 | Wall Up     | {0, 1} |
     | 1, 1 | Wall Right  | {0, 1} |
     | 1, 2 | Wall Down   | {0, 1} |

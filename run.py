@@ -2,11 +2,12 @@ import numpy
 import keras
 import gym
 import tensorflow as tf
+from ecosys.environment import EcosysEnv
 
 
 def main():
     # Create environment and reset its state
-    env = gym.make('ecosys.environment:Ecosys-v0', render_mode='human')
+    env = gym.make('Ecosys-v0', render_mode='human')
     state, _ = env.reset()
     env.render()
     # Load ML model
