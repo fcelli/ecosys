@@ -1,3 +1,5 @@
+import sys
+sys.path.append('./')
 import numpy
 import keras
 import gym

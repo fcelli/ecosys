@@ -5,9 +5,9 @@ test:
 	pytest
 
 train:
-	python train.py
+	python app/train.py
 
 run:
-	python run.py
+	python app/run.py
 
 .PHONY: init test train run

@@ -1,3 +1,5 @@
+import sys
+sys.path.append('./')
 import tensorflow as tf
 import keras
 import collections
